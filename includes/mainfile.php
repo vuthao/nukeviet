@@ -26,6 +26,7 @@ define('NV_CURRENTTIME', isset($_SERVER['REQUEST_TIME']) ? $_SERVER['REQUEST_TIM
 $db_config = $global_config = $module_config = $client_info = $user_info = $admin_info = $sys_info = $lang_global = $lang_module = $rss = $nv_vertical_menu = $array_mod_title = $content_type = $submenu = $error_info = $countries = $loadScript = $headers = $theme_config = $nv_hooks = $nv_plugins = $custom_preloads = [];
 $page_title = $key_words = $page_url = $canonicalUrl = $prevPage = $nextPage = $mod_title = $editor_password = $my_head = $my_footer = $description = $contents = '';
 $editor = false;
+$isIndexFile = (substr($_SERVER['PHP_SELF'], -9, 9) === 'index.php');
 
 // Ket noi voi cac file constants, config
 require NV_ROOTDIR . '/includes/constants.php';
@@ -146,6 +147,7 @@ require NV_ROOTDIR . '/includes/utf8/' . $sys_info['string_handler'] . '_string_
 require NV_ROOTDIR . '/includes/utf8/utf8_functions.php';
 require NV_ROOTDIR . '/includes/core/filesystem_functions.php';
 require NV_ROOTDIR . '/includes/functions.php';
+require NV_ROOTDIR . '/includes/new_functions.php';
 require NV_ROOTDIR . '/includes/core/theme_functions.php';
 
 // IP Ban
@@ -161,7 +163,7 @@ if ($global_config['proxy_blocker'] != 0) {
     }
 }
 
-if (defined('NV_SYSTEM')) {
+if (defined('NV_SYSTEM') and $isIndexFile) {
     require NV_ROOTDIR . '/includes/request_uri.php';
 }
 
@@ -380,7 +382,15 @@ if (!empty($global_config['site_phone']) and preg_match('/^(.+)\[([0-9\*\#\+\-\.
     $global_config['site_int_phone'] = $matches[2];
 }
 
-$global_config['custom_configs'] = !empty($global_config['custom_configs']) ? json_decode($global_config['custom_configs'], true) : [];
+if (!empty($global_config['custom_configs'])) {
+    $custom_configs = json_decode($global_config['custom_configs'], true);
+    $global_config['custom_configs'] = [];
+    foreach ($custom_configs as $key => $val) {
+        $global_config['custom_configs'][$key] = is_array($val) ? $val[0] : $val;
+    }
+} else {
+    $global_config['custom_configs'] = [];
+}
 
 nv_apply_hook('', 'zalo_webhook');
 
@@ -468,7 +478,7 @@ if ($nv_Request->isset_request('__sendmail', 'post')) {
             $cts = file_get_contents(NV_ROOTDIR . '/' . NV_TEMP_DIR . '/' . $md5file);
             $cts = json_decode($cts, true);
             @unlink(NV_ROOTDIR . '/' . NV_TEMP_DIR . '/' . $md5file);
-            @nv_sendmail($cts['from'], $cts['to'], $cts['subject'], $cts['message'], $cts['files'], $cts['AddEmbeddedImage'], $cts['testmode'], $cts['cc'], $cts['bcc'], $cts['mailhtml']);
+            @nv_sendmail($cts['from'], $cts['to'], $cts['subject'], $cts['message'], $cts['files'], $cts['AddEmbeddedImage'], $cts['testmode'], $cts['cc'], $cts['bcc'], $cts['mailhtml'], $cts['custom_headers']);
         }
     }
     exit(0);

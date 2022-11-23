@@ -1269,16 +1269,17 @@ function mailAddHtml($subject, $body)
 /**
  * nv_sendmail()
  *
- * @param array|string $from
- * @param array|string $to
- * @param string       $subject
- * @param string       $message
- * @param string       $files
- * @param bool         $AddEmbeddedImage
- * @param bool         $testmode
- * @param array|string $cc
- * @param array        $bcc
- * @param bool         $mailhtml
+ * @param mixed  $from
+ * @param mixed  $to
+ * @param string $subject
+ * @param string $message
+ * @param string $files
+ * @param bool   $AddEmbeddedImage
+ * @param bool   $testmode
+ * @param mixed  $cc
+ * @param array  $bcc
+ * @param bool   $mailhtml
+ * @param array  $custom_headers
  * @return bool
  *
  * $from:             Nếu là string thì nó được hiểu là reply_address
@@ -1306,8 +1307,10 @@ function mailAddHtml($subject, $body)
  *                    Hoặc: contact@nukeviet.vn,contact2@nukeviet.vn
  *
  * $mailhtml:         Xác định có thêm khung HTML vào nội dung thư hay không, mặc định true
+ *
+ * $custom_headers:   Tiêu đề tùy chỉnh thêm vào phần header của mail (Dạng: Khóa => Giá trị)
  */
-function nv_sendmail($from, $to, $subject, $message, $files = '', $AddEmbeddedImage = false, $testmode = false, $cc = [], $bcc = [], $mailhtml = true)
+function nv_sendmail($from, $to, $subject, $message, $files = '', $AddEmbeddedImage = false, $testmode = false, $cc = [], $bcc = [], $mailhtml = true, $custom_headers = [])
 {
     global $global_config;
 
@@ -1430,6 +1433,15 @@ function nv_sendmail($from, $to, $subject, $message, $files = '', $AddEmbeddedIm
             }
         }
 
+        // Thêm tiêu đề tùy chỉnh
+        if (!empty($custom_headers)) {
+            foreach ($custom_headers as $key => $val) {
+                $mail->addCustomHeader($key, $val);
+            }
+        }
+
+        nv_apply_hook('', 'sendmail_others_actions', [$global_config, $mail]);
+
         // Gửi mail
         if (!$mail->Send()) {
             if (!$testmode and !empty($global_config['notify_email_error'])) {
@@ -1523,8 +1535,9 @@ function _otherMethodSendmail($sm_parameters)
  * @param array|string $cc
  * @param array        $bcc
  * @param bool         $mailhtml
+ * @param array        $custom_headers
  */
-function nv_sendmail_async($from, $to, $subject, $message, $files = '', $AddEmbeddedImage = false, $testmode = false, $cc = [], $bcc = [], $mailhtml = true)
+function nv_sendmail_async($from, $to, $subject, $message, $files = '', $AddEmbeddedImage = false, $testmode = false, $cc = [], $bcc = [], $mailhtml = true, $custom_headers = [])
 {
     global $global_config;
 
@@ -1538,7 +1551,8 @@ function nv_sendmail_async($from, $to, $subject, $message, $files = '', $AddEmbe
         'testmode' => $testmode,
         'cc' => $cc,
         'bcc' => $bcc,
-        'mailhtml' => $mailhtml
+        'mailhtml' => $mailhtml,
+        'custom_headers' => $custom_headers
     ], JSON_UNESCAPED_UNICODE);
 
     $file_name = nv_genpass(8);
@@ -2510,6 +2524,7 @@ function nv_sys_mods($lang = '')
                 'show_func' => $row['show_func'],
                 'func_custom_name' => $row['func_custom_name'],
                 'func_site_title' => empty($row['func_site_title']) ? $row['func_custom_name'] : $row['func_site_title'],
+                'description' => $row['description'],
                 'in_submenu' => $row['in_submenu']
             ];
             $sys_mods[$m_title]['alias'][$f_name] = $f_alias;
@@ -2771,7 +2786,7 @@ function add_push($args)
     $data['receiver_grs'] = !empty($data['receiver_grs']) ? implode(',', $data['receiver_grs']) : '';
     $data['sender_role'] == 'group' && $data['receiver_grs'] = '';
     $data['receiver_ids'] = !empty($data['receiver_ids']) ? implode(',', $data['receiver_ids']) : '';
-    $data['message'] = nv_nl2br(strip_tags($data['message'], '<br>'),'<br/>');
+    $data['message'] = nv_nl2br(strip_tags($data['message'], '<br>'), '<br/>');
     if (!empty($data['link']) and !preg_match('#^https?\:\/\/#', $data['link'])) {
         str_starts_with($data['link'], NV_BASE_SITEURL) && $data['link'] = substr($data['link'], strlen(NV_BASE_SITEURL));
     }
@@ -3214,7 +3229,7 @@ function nv_apply_hook($module, $tag, $args = [], $default = null, $return_type 
  * @param string $hook_module => Module sử dụng dữ liệu
  * @param int    $pid         => ID quản lý trong CSDL
  */
-function nv_add_hook($module_name, $tag, $priority = 10, $callback, $hook_module = '', $pid = 0)
+function nv_add_hook($module_name, $tag, $priority, $callback, $hook_module = '', $pid = 0)
 {
     global $nv_hooks;
 

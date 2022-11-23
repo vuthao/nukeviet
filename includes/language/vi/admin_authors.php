@@ -4,7 +4,7 @@
  * NukeViet Content Management System
  * @version 4.x
  * @author VINADES.,JSC <contact@vinades.vn>
- * @copyright (C) 2009-2021 VINADES.,JSC. All rights reserved
+ * @copyright (C) 2009-2022 VINADES.,JSC. All rights reserved
  * @license GNU/GPL version 2 or any later version
  * @see https://github.com/nukeviet The NukeViet CMS GitHub project
  */
@@ -109,7 +109,7 @@ $lang_module['adminip'] = 'Quản lý IP truy cập khu vực quản trị';
 $lang_module['adminip_ip'] = 'Ip';
 $lang_module['adminip_timeban'] = 'Thời gian bắt đầu';
 $lang_module['adminip_timeendban'] = 'Thời gian kết thúc';
-$lang_module['adminip_add'] = 'Thêm địa chỉ IP';
+$lang_module['adminip_add'] = 'Thêm địa chỉ IP được chấp nhận tại khu vực admin';
 $lang_module['adminip_address'] = 'Địa chỉ';
 $lang_module['adminip_begintime'] = 'Thời gian bắt đầu';
 $lang_module['adminip_endtime'] = 'Thời gian kết thúc';
@@ -127,8 +127,8 @@ $lang_module['adminip_error_validip'] = 'Lỗi: Bạn cần nhập IP đúng chu
 $lang_module['title_username'] = 'Quản lý tài khoản tường lửa khu vực admin';
 $lang_module['admfirewall'] = 'Kiểm tra tường lửa cho khu vực admin';
 $lang_module['block_admin_ip'] = 'Kiểm tra IP khi truy cập khu vực admin';
-$lang_module['username_add'] = 'Thêm tài khoản';
-$lang_module['username_edit'] = 'Sửa tài khoản';
+$lang_module['username_add'] = 'Thêm tài khoản tường lửa';
+$lang_module['username_edit'] = 'Sửa tài khoản tường lửa';
 $lang_module['nicknam_delete_confirm'] = 'Bạn có chắc muốn xóa tài khoản này ra khỏi danh sách?';
 $lang_module['passwordsincorrect'] = 'Mật khẩu bạn nhập hai lần không giống nhau.';
 $lang_module['nochangepass'] = 'Nếu không thay đổi mật khẩu bạn không nhập hai trường mật khẩu';
@@ -136,7 +136,8 @@ $lang_module['rule_user'] = 'Tên đăng nhập chỉ dùng các ký tự a-zA-Z
 $lang_module['rule_pass'] = 'Mật khẩu chỉ dùng các ký tự a-zA-Z0-9_-';
 $lang_module['spadmin_add_admin'] = 'Cho phép người điều hành chung tạo và thay đổi quyền hạn người điều hành modules';
 $lang_module['authors_detail_main'] = 'Hiển thị chi tiết các thông tin tài khoản của người quản trị';
-
+$lang_module['admin_login_duration'] = 'Thời lượng của một phiên đăng nhập quản trị viên';
+$lang_module['admin_login_duration_note'] = '0 = Thời lượng không được xem xét';
 $lang_module['admin_check_pass_time'] = 'Thời gian kiểm tra lại mật khẩu, nếu admin không sử dụng trình duyệt';
 $lang_module['add_user'] = 'Chỉ định người dùng';
 $lang_module['add_select'] = 'Chọn';
@@ -176,59 +177,5 @@ $lang_module['2step_oauth_add_mail_content'] = 'Xin chào, %1$s!<br /><br />Ban 
 $lang_module['2step_oauth_del_mail_subject'] = 'Định cấu hình Xác thực hai bước bằng Oauth đã bị hủy';
 $lang_module['2step_oauth_del_mail_content'] = 'Xin chào, %1$s!<br /><br />Ban quản trị website %2$s xin thông báo:<br />Theo yêu cầu của bạn, việc xác thực hai bước bằng Oauth đã hủy thành công. Bạn đã không thể sử dụng tài khoản %3$s của nhà cung cấp %4$s để xác thực đăng nhập vào quản trị hệ thống.<br /><br />Ban quản trị website';
 $lang_module['2step_oauth_dels_mail_content'] = 'Xin chào, %1$s!<br /><br />Ban quản trị website %2$s xin thông báo:<br />Theo yêu cầu của bạn, việc xác thực hai bước bằng Oauth đã hủy thành công. Bạn đã không thể sử dụng các tài khoản %3$s để xác thực đăng nhập vào quản trị hệ thống.<br /><br />Ban quản trị website';
-
-$lang_module['api_addtime'] = 'Tạo lúc';
-$lang_module['api_edittime'] = 'Cập nhật';
-$lang_module['api_roles'] = 'Quản lý API Roles';
-$lang_module['api_roles_list'] = 'Danh sách API Roles';
-$lang_module['api_roles_empty'] = 'Chưa có API Role nào được thêm. Mời bạn hoàn thành mẫu bên dưới để thêm mới API Role';
-$lang_module['api_roles_add'] = 'Tạo mới API Role';
-$lang_module['api_roles_edit'] = 'Sửa API Role';
-$lang_module['api_roles_title'] = 'Tên gọi API Role';
-$lang_module['api_roles_description'] = 'Mô tả API Role';
-$lang_module['api_roles_allowed'] = 'Các API được phép truy cập';
-$lang_module['api_roles_error_title'] = 'Lỗi: Chưa nhập tên gọi API Role';
-$lang_module['api_roles_error_exists'] = 'Lỗi: Tên gọi API Role này đã có, mời nhập tên gọi khác để tránh nhầm lẫn';
-$lang_module['api_roles_error_role'] = 'Lỗi: Chưa có API nào được chọn';
-$lang_module['api_roles_checkall'] = 'Chọn tất cả';
-$lang_module['api_roles_uncheckall'] = 'Bỏ chọn tất cả';
-$lang_module['api_roles_detail'] = 'Chi tiết các API của';
-$lang_module['api_role_notice'] = 'Lưu ý: Tùy theo cấp độ của tài khoản quản trị được cấp phép mà các API được quyền sử dụng trong mỗi API Role sẽ được xác định lại';
-$lang_module['api_role_notice_lang'] = 'Các API của hệ thống sẽ hiệu lực đối với tất cả các ngôn ngữ. Các API của module chỉ có hiệu lực đối với ngôn ngữ hiện tại.';
-
-$lang_module['api_of_system'] = 'Hệ thống';
-
-$lang_module['api_cr'] = 'Quyền truy cập API';
-$lang_module['api_cr_error_role_empty'] = 'Chưa có API Role được tạo, hãy tạo API Role trước. Hệ thống sẽ tự động chuyển trến trang tạo API Role trong giây lát';
-$lang_module['api_remote_off'] = 'Remote API <strong>đang tắt</strong>, các tài khoản được phép truy cập API bên dưới sẽ không thể thực hiện các cuộc gọi API. Để thực hiện được cuộc gọi API, hãy <strong><a href="%s" target="_blank">bật Remote API tại đây</a></strong>';
-$lang_module['api_cr_last_access_none'] = 'Chưa';
-$lang_module['api_cr_last_access'] = 'Dùng gần đây';
-$lang_module['api_cr_add'] = 'Thêm quyền truy cập API';
-$lang_module['api_cr_edit'] = 'Sửa quyền truy cập API';
-$lang_module['api_cr_title'] = 'Mô tả quyền';
-$lang_module['api_cr_for_admin'] = 'Chọn quản trị';
-$lang_module['api_cr_roles'] = 'Chọn API Role';
-$lang_module['api_cr_roles1'] = 'API Role';
-$lang_module['api_cr_error_title'] = 'Lỗi: Vui lòng nhập mô tả quyền truy cập API';
-$lang_module['api_cr_error_admin'] = 'Lỗi: Vui lòng chọn quản trị';
-$lang_module['api_cr_error_roles'] = 'Lỗi: Vui lòng chọn API Role';
-$lang_module['api_cr_result'] = 'Dưới đây là khóa truy cập và mã bí mật. Bạn cần lưu trữ lại mã bí mật ở một nơi an toàn trước khi thoát khỏi màn hình này. Sau khi thoát khỏi màn hình này bạn sẽ không thể lấy lại mã bí mật. Nếu bị mất khóa truy cập và mã bí mật bạn cần phải tạo lại quyền truy cập API khác.';
-$lang_module['api_cr_credential_ident'] = 'Khóa truy cập';
-$lang_module['api_cr_credential_secret'] = 'Mã bí mật';
-$lang_module['api_cr_back'] = 'Đã sao chép xong';
-$lang_module['api_cr_notice'] = 'Chú ý: Giữ an toàn cho mã bí mật và khóa truy cập đặc biệt là mã bí mật. Nếu mã bí mật và khóa truy cập bị lộ, kẻ phá hoại có thể thực hiện các thao tác không mong muốn';
-$lang_module['api_cr_ips'] = 'IP Truy cập API';
-$lang_module['credential_ips_help'] = 'Nhập mỗi IP một dòng, truy vấn từ các IP này được phép thực hiện';
-$lang_module['api_cr_auth_method'] = 'Phương thức xác thực';
-$lang_module['api_cr_auth_method_password_verify'] = 'password_verify (khuyên dùng)';
-$lang_module['api_cr_auth_method_md5_verify'] = 'md5_verify';
-$lang_module['api_cr_auth_method_none'] = 'Không xác thực, dùng trong việc phát triển';
-
-$lang_module['api_System'] = 'Các chức năng hệ thống';
-$lang_module['api_System_SendMail'] = 'Gửi email';
-$lang_module['api_cat'] = 'Danh mục';
-$lang_module['cat_api_list'] = 'Các API trong danh mục';
-
 $lang_module['other_info'] = 'Thông tin khác';
-$lang_module['value_copied'] = 'Giá trị đã được sao chép vào bộ nhớ';
 $lang_module['admin_user_logout'] = 'Buộc đăng xuất khỏi tài khoản người dùng khi đăng nhập với tư cách quản trị viên';
