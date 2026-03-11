@@ -1,0 +1,94 @@
+schema: spec-driven
+
+context: |
+  # NukeViet 5.x — OpenSpec Context
+
+  ## Tech Stack
+  PHP 8.2–8.5, MariaDB/MySQL, NukeViet 5.x CMS
+  Node.js v18.17+, NPM v10.5+, Composer v2.6+
+  Testing: Codeception (Unit + Acceptance + Selenium)
+  CSS build: SCSS → npm run watch-admin / watch-core
+  Git: main (prod) | develop (staging), conventional commits
+
+  ## Bảo mật — BẮT BUỘC
+  - Input: $nv_Request->get_int/get_title/get_editor() — KHÔNG dùng $_GET/$_POST trực tiếp
+  - Output HTML: nv_htmlspecialchars()
+  - SQL chuỗi user: PDO prepare() + bindParam(); số nguyên dùng (int) trực tiếp
+  - CSRF: nv_check_formtoken() cho mọi form POST; nv_form_token() trong HTML
+  - File: nv_is_file() — không is_file() với path từ user
+  - Redirect: $page_url hoặc nv_redirect_encrypt() — không $client_info['selfurl']
+  - Admin: kiểm tra defined('NV_IS_ADMIN') trước khi ghi
+
+  ## Cấu trúc Module
+  modules/ten-module/: version.php (BẮT BUỘC), functions.php (BẮT BUỘC, define NV_IS_MOD_*),
+  admin.functions.php (define NV_IS_FILE_ADMIN), admin.menu.php ($submenu + $allow_func),
+  action_mysql.php ($sql_create_module + $sql_drop_module), theme.php, funcs/*.php, admin/*.php,
+  Shared/ (PSR-4: NukeViet\Module\{name}\Shared\), language/vi.php + en.php
+  Template .tpl → themes/[theme]/modules/[module]/ — KHÔNG trong modules/
+
+  ## Cấu trúc Theme
+  themes/ten-theme/: config.ini, theme.php, layout/*.tpl, blocks/, modules/, css/, js/
+  Grid 24 cột. Frontend: XTemplate (.tpl). Admin: NVSmarty (themes/admin_future/)
+
+  ## Database
+  Bảng đa ngôn ngữ: NV_PREFIXLANG . '_ten_bang' (→ nv5_vi_news)
+  Bảng dùng chung: NV_TABLEPREFIX . '_ten_bang' (→ nv5_users)
+  SELECT: $db_slave (luôn dùng cho đọc). INSERT/UPDATE/DELETE: $db
+  Query Builder: $db_slave->sqlreset()->select()->from()->where()->order()->limit()
+  Cache query: $nv_Cache->db($sql, $key_field, $module_name)
+  Invalidation: $nv_Cache->delMod($module_name) sau khi ghi
+
+  ## Tham chiếu Skill (đọc khi cần chi tiết)
+  - Module: .claude/skills/nukeviet-module/SKILL.md
+  - MySQL/DB: .claude/skills/nukeviet-mysql/SKILL.md
+  - Bảo mật: .claude/skills/nukeviet-security/SKILL.md
+  - Theme: .claude/skills/nukeviet-theme/SKILL.md
+  - Hook: .claude/skills/nukeviet-hook/SKILL.md
+  - API: .claude/skills/nukeviet-api/SKILL.md
+  - Cache: .claude/skills/nukeviet-cache/SKILL.md
+  - Ngôn ngữ: .claude/skills/nukeviet-language/SKILL.md
+  - Block: .claude/skills/nukeviet-block/SKILL.md
+  - Testing: .claude/skills/nukeviet-testing/SKILL.md
+  - Review: .claude/skills/nukeviet-review/SKILL.md
+  - Upgrade: .claude/skills/nukeviet-upgrade/SKILL.md
+
+rules:
+  proposal:
+    - Viết artifact bằng tiếng Việt
+    - Map impact vào cấu trúc file NukeViet — xác định rõ modules/, themes/, includes/ nào bị ảnh hưởng
+    - Liệt kê skill NukeViet liên quan (nukeviet-module, nukeviet-mysql, nukeviet-theme, v.v.) trong phần Impact
+    - Tham chiếu module hiện có trong src/modules/ làm mẫu triển khai khi tạo module mới
+    - Khi change liên quan đến DB, ghi rõ bảng nào cần tạo/sửa với prefix convention (NV_PREFIXLANG hoặc NV_TABLEPREFIX)
+    - Khi change liên quan đến giao diện, ghi rõ frontend (XTemplate) hay admin (NVSmarty) hoặc cả hai
+
+  design:
+    - Viết artifact bằng tiếng Việt
+    - Tuân thủ pattern DB NukeViet — $db_slave cho SELECT, $db cho INSERT/UPDATE/DELETE, Query Builder cho query phức tạp
+    - Tôn trọng phân tách template engine — XTemplate cho frontend (theme.php + .tpl trong themes/), NVSmarty cho admin (admin/*.php + .tpl trong themes/admin_future/)
+    - Xem xét điểm tích hợp hook — module có cần phát sự kiện (nv_apply_hook) hoặc lắng nghe sự kiện (nv_add_hook) không?
+    - Lên kế hoạch invalidation cache — gọi $nv_Cache->delMod() sau mọi thao tác ghi DB
+    - Khi change liên quan đến API, chỉ rõ dùng Admin API (IApi) hay User API (UiApi)
+    - 'Cân nhắc dùng subagent nvsx-arch-verifier khi design liên quan đến tích hợp cross-module, pattern kiến trúc mới, hoặc thao tác nhạy cảm bảo mật. Bỏ qua cho change đơn giản.'
+
+  specs:
+    - Viết artifact bằng tiếng Việt
+    - Mọi spec có form POST PHẢI bao gồm kịch bản kiểm tra CSRF (nv_check_formtoken())
+    - Mọi spec hiển thị dữ liệu user PHẢI bao gồm kịch bản phòng chống XSS (nv_htmlspecialchars())
+    - Mọi spec có query DB với input user PHẢI bao gồm kịch bản phòng chống SQL injection (prepare + bindParam)
+    - Mọi spec nhận input PHẢI chỉ rõ method $nv_Request phù hợp (get_int, get_title, get_editor, v.v.)
+    - Mọi spec có thao tác admin PHẢI bao gồm kịch bản kiểm tra phân quyền (NV_IS_ADMIN, NV_IS_SPADMIN khi cần)
+    - Khi change hỗ trợ đa ngôn ngữ, bao gồm kịch bản kiểm tra file language/vi.php và language/en.php
+    - 'Cân nhắc dùng subagent nvsx-test-verifier để validate tính đầy đủ kịch bản — đặc biệt cho spec có thao tác CRUD hoặc logic phức tạp.'
+    - 'Header spec dùng tiếng Việt: section chính "## Yêu cầu MỚI/SỬA ĐỔI/XÓA", tên yêu cầu "### Yêu cầu: <tên>", kịch bản "#### Kịch bản: <tên>"'
+    - 'Mô tả yêu cầu dùng từ khóa "PHẢI" (viết hoa) cho điều bắt buộc, "KHÔNG ĐƯỢC" cho điều cấm — không dùng SHALL/MUST/MUST NOT tiếng Anh'
+    - 'Kịch bản dùng format "- **KHI** <điều kiện>" và "- **THÌ** <kết quả mong đợi>" — không dùng WHEN/THEN tiếng Anh'
+    - 'Code mẫu trong spec có comment tiếng Việt, tham chiếu hàm NukeViet bằng tên đầy đủ (vd: $nv_Request->get_title(), nv_htmlspecialchars()), guard constant đúng chuẩn (NV_IS_MOD_* cho funcs/, NV_IS_FILE_ADMIN cho admin/, NV_MAINFILE cho block/hook/Shared, NV_SYSTEM cho functions.php)'
+
+  tasks:
+    - Viết artifact bằng tiếng Việt
+    - Sắp xếp task theo thứ tự triển khai NukeViet — (1) action_mysql.php/schema DB, (2) file PHP backend (functions.php, admin.functions.php, funcs/, admin/), (3) theme.php + file template .tpl, (4) file ngôn ngữ, (5) block, (6) hook
+    - 'Mỗi nhóm task PHẢI có comment tham chiếu file skill liên quan, ví dụ: Ref .claude/skills/nukeviet-mysql/SKILL.md'
+    - Task tạo module mới PHẢI bao gồm checklist file bắt buộc từ skill nukeviet-module
+    - 'Task liên quan đến giao diện ghi chú: Subagent gợi ý nvsx-uiux-designer cho quyết định layout/UX'
+    - 'Task nhạy cảm bảo mật (xử lý input, xác thực, phân quyền) ghi chú: Subagent gợi ý code-reviewer cho review bảo mật'
+    - 'Task triển khai PHP/template/DB ghi chú: Subagent gợi ý fullstack-developer cho triển khai'
