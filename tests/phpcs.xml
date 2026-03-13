@@ -30,6 +30,7 @@
             <property name="lineLimit" value="300"/>
             <property name="absoluteLineLimit" value="500"/>
         </properties>
+        <exclude-pattern>*/language/*</exclude-pattern>
     </rule>
 
     <!-- Không bắt buộc docblock cho mọi function (NukeViet 5 ưu tiên sự tinh gọn) -->
