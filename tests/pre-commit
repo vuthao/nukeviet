@@ -38,7 +38,7 @@ while IFS= read -r FILE; do
         fi
 
         # Kiểm tra độ dài tên file (phần tử cuối cùng)
-        if [[ "$PART" == "${PARTS[-1]}" ]]; then
+        if [[ "$FILE" != */vendor/* && "$PART" == "${PARTS[-1]}" ]]; then
             if [ ${#PART} -gt 50 ]; then
                 echo "❌ LỖI: Tên tập tin quá dài (${#PART} ký tự): \"$PART\""
                 echo "👉 Đường dẫn: $FILE"
