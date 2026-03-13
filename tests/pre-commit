@@ -62,19 +62,34 @@ while IFS= read -r FILE; do
     fi
 done <<< "$STAGED_FILES_LIST"
 
-# 3. KIỂM TRA TIÊU CHUẨN CODE (PHPCS)
-if [ ! -z "$PHPCS" ] && [ ! -z "$PHP_ONLY_FILES" ]; then
+# 3. KIỂM TRA TIÊU CHUẨN CODE (PHPCS) theo chunk
+if [ ${#PHPCS_CMD[@]} -gt 0 ] && [ ${#PHP_ONLY_FILES[@]} -gt 0 ]; then
     echo "--- 🚀 Đang kiểm tra PHPCS cho các file PHP ---"
 
     PHPCS_CONFIG="tests/phpcs.xml"
     if [ -f "$PHPCS_CONFIG" ]; then
-        $PHPCS --standard="$PHPCS_CONFIG" $PHP_ONLY_FILES
+        STANDARD_ARG=(--standard="$PHPCS_CONFIG")
     else
         echo "ℹ️  Không thấy $PHPCS_CONFIG, sử dụng mặc định PSR12."
-        $PHPCS --standard=PSR12 $PHP_ONLY_FILES
+        STANDARD_ARG=(--standard=PSR12)
     fi
 
-    if [ $? -ne 0 ]; then
+    CHUNK_SIZE=50
+    TOTAL_FILES=${#PHP_ONLY_FILES[@]}
+    HAS_ERROR=0
+
+    for ((i=0; i<TOTAL_FILES; i+=CHUNK_SIZE)); do
+        CHUNK=("${PHP_ONLY_FILES[@]:i:CHUNK_SIZE}")
+
+        echo "➡️  Kiểm tra chunk $((i / CHUNK_SIZE + 1)) ($((${#CHUNK[@]})) file)..."
+
+        "${PHPCS_CMD[@]}" "${STANDARD_ARG[@]}" "${CHUNK[@]}"
+        if [ $? -ne 0 ]; then
+            HAS_ERROR=1
+        fi
+    done
+
+    if [ $HAS_ERROR -ne 0 ]; then
         echo ""
         echo "❌ LỖI: Code không đạt tiêu chuẩn. Vui lòng sửa hoặc chạy phpcbf."
         exit 1
