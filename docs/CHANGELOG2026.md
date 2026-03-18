@@ -41,3 +41,31 @@ Ví dụ
 // Unserialize an toàn
 $data = unserialize($cache, NV_UNSERIALIZE_SAFE);
 ```
+
+### CSRF — Kiểm tra token trước khi xử lý POST
+
+- `$csrf_key` đã được tạo mức độ hệ thống
+
+- Tạo token: `$csrf_create = csrf_create($csrf_key);` Nếu `$csrf_create` chỉ dùng 1 lần (gán vào template), KHÔNG cần tạo biến phụ
+
+- Kiểm tra: `if (csrf_check($nv_Request->get_string('checkss', 'post'), $csrf_key))`
+
+- Nếu cần tạo csrf key khác hày dùng `$_csrf_key` để không ghi đè, chẳng may dùng nhiều chỗ
+
+Ví dụ
+```php
+if ($nv_Request->isset_request('save', 'post')) {
+    if (!csrf_check($nv_Request->get_string('checkss', 'post'), $csrf_key)) {
+        // Không hợp lệ → báo lỗi hoặc redirect (tùy định dạng trả về)
+        nv_jsonOutput([
+            'status' => 'error',
+            'mess' => $nv_Lang->getGlobal('error_checkss')
+        ]);
+    }
+    // Thực hiện xử lý dữ liệu tiếp theo...
+}
+
+$xtpl->assign('CHECKSS', csrf_create($csrf_key));
+
+// Tpl: <input type="hidden" name="checkss" value="{CHECKSS}" />
+```
