@@ -21,7 +21,7 @@ if (!$myZalo->isValid()) {
 if ($nv_Request->isset_request('player,url', 'get')) {
     $url = $nv_Request->get_string('url', 'get', '');
     if (empty($url) or !nv_is_url($url, true)) {
-        exit('Invalid URL');
+        nv_htmlOutput('Invalid URL');
     }
     $data = file_get_contents($url);
     $md5file = md5($url);
